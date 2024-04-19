@@ -1,13 +1,6 @@
-import {
-  IsNotEmpty,
-  IsString,
-  MinLength,
-  IsAlpha,
-  IsIn
-} from 'class-validator';
+import { IsNotEmpty, IsString, MinLength, IsIn } from 'class-validator';
 
 export class CreateTodoDto {
-
   @IsString()
   @IsNotEmpty()
   @MinLength(3)
@@ -20,7 +13,6 @@ export class CreateTodoDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsAlpha()
   @IsIn(['pending', 'in-progress', 'done'])
   status: string;
 }

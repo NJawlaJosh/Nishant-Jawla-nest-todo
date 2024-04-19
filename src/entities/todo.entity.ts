@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, AfterInsert, AfterRemove } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { commonEntity } from './common.entity';
 import { User } from './users.entity';
 import { CreateTodoDto } from 'src/modules/todos/dto/create-todo.dto';
@@ -27,5 +27,4 @@ export class Todo extends commonEntity {
 
     return todo;
   }
-  
 }

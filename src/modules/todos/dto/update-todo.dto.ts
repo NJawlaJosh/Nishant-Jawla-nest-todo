@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { CreateTodoDto } from './create-todo.dto';
+import { PickType } from '@nestjs/swagger';
 
-export class UpdateTodoDto extends PartialType(CreateTodoDto) {}
+export class UpdateTodoDto extends PickType(CreateTodoDto, [
+  'status',
+] as const) {}

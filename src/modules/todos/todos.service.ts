@@ -5,11 +5,10 @@ import { Todo } from 'src/entities/todo.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/users.entity';
-import { Types } from 'mongoose';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class TodosService {
-
   constructor(
     @InjectRepository(Todo)
     private todoRepository: Repository<Todo>,
@@ -18,38 +17,91 @@ export class TodosService {
   ) {}
 
   async create(createTodoDto: CreateTodoDto, user_email: string) {
-    const user =  await this.userRepository.findOneBy({email: user_email})
+    const user = await this.userRepository.findOneBy({ email: user_email });
     if (!user) {
-      return "User not found"
+      return 'User not found';
     }
     const todo = Todo.processRequestData(createTodoDto, user);
     await this.todoRepository.save(todo);
 
-    return "Todo created successfully"
+    return 'Todo created successfully';
   }
 
-  async findAll(user_email: string) {
+  async findAll(user_email: string, orderingKey: keyof Todo) {
+    const user = await this.userRepository.findOneBy({ email: user_email });
+    if (!user) {
+      return 'User not found';
+    }
 
     const todos = await this.todoRepository.find({
       where: {
-          user : {  email : user_email  }
+        user: user,
       },
-  })
+      order: {
+        [orderingKey]: 'DESC',
+      },
+    });
 
-  console.log("Todos are : ", todos, " are of type ", typeof(todos));
-
-    return `This action returns all todos of user ${user_email} as ${todos}`;
+    return {
+      data: todos,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} todo`;
+  async findOne(id: string, user_email: string) {
+    const user = await this.userRepository.findOneBy({ email: user_email });
+    if (!user) {
+      return 'User not found';
+    }
+
+    const todo = await this.todoRepository.findOneBy({
+      user: user,
+      _id: new ObjectId(id),
+    });
+
+    return {
+      data: todo,
+    };
   }
 
-  update(id: number, updateTodoDto: UpdateTodoDto) {
-    return `This action updates a #${id} todo`;
+  async update(id: string, updateTodoDto: UpdateTodoDto, user_email: string) {
+    const user = await this.userRepository.findOneBy({ email: user_email });
+    if (!user) {
+      return 'User not found';
+    }
+
+    const todo = await this.todoRepository.findOneBy({
+      user: user,
+      _id: new ObjectId(id),
+    });
+
+    if (!todo) {
+      return 'Todo not found';
+    }
+
+    todo.status = updateTodoDto.status;
+
+    await this.todoRepository.update(todo._id, todo);
+
+    return 'Todo updated successfully';
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} todo`;
+  async remove(id: string, user_email: string) {
+    const user = await this.userRepository.findOneBy({ email: user_email });
+    if (!user) {
+      return 'User not found';
+    }
+
+    const todo = await this.todoRepository.findOneBy({
+      user: user,
+      _id: new ObjectId(id),
+    });
+
+    if (!todo) {
+      return 'Todo not found';
+    }
+
+    await this.todoRepository.delete(todo._id);
+
+    return 'Todo deleted successfully';
   }
 }

@@ -1,6 +1,5 @@
-import { Column, Entity, Unique, OneToMany, BeforeInsert } from 'typeorm';
+import { Column, Entity, Unique, BeforeInsert } from 'typeorm';
 import { commonEntity } from './common.entity';
-import { Todo } from './todo.entity';
 import * as bcrypt from 'bcrypt';
 
 @Entity()
@@ -36,5 +35,4 @@ export class User extends commonEntity {
   async validatePassword(password: string): Promise<boolean> {
     return await bcrypt.compare(password, this.encryptedPassword);
   }
-
 }
