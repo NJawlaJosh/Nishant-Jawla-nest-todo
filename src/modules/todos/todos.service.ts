@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
-import { Todo } from 'src/entities/todo.entity';
+import { Todo } from '../../entities/todo.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/entities/users.entity';
+import { User } from '../../entities/users.entity';
 import { ObjectId } from 'mongodb';
 
 @Injectable()
